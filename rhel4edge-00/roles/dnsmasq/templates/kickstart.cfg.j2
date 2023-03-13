@@ -1,0 +1,14 @@
+lang en_US
+timezone Europe/Warsaw
+reboot
+rootpw {{ root_password_encrypted }} --iscrypted
+text
+ostreesetup --nogpg --osname=rhel --url={{ image_location  }} --ref=rhel/9/x86_64/edge
+bootloader --append="rhgb quiet crashkernel=auto"
+zerombr
+clearpart --all --initlabel
+autopart --nohome
+skipx
+firstboot --disable
+selinux --enforcing
+network --bootproto=dhcp

@@ -1,0 +1,62 @@
+- set_fact:
+    dhcp_range: {}
+
+- set_fact:
+    dhcp_interface: eth1
+  when:
+  - dhcp_interface is not defined
+
+- set_fact:
+    ip_range: 192.168.10.0/24
+  when:
+  - ip_range is not defined
+
+- name: Ensure provided IP range for DHCP is correct
+  assert:
+    that:
+    - ip_range | ansible.utils.ipv4()
+    - ip_range | ansible.utils.ipaddr('size') > 5
+    msg: "The provided IP address range {{ ip_range }} isn't valid"
+
+- name: Check if we have already configured IP address from the provided DHCP range. If so, let's use it.
+  set_fact:
+    ip_address: "{{ item }}"
+  when:
+  - item | ansible.utils.ipaddr(ip_range)
+  with_items:
+  - "{{ ansible_all_ipv4_addresses }}"
+
+- debug:
+    msg: "I will use already configured {{ ip_address }} instead of configuring the new one."
+  when:
+  - ip_address is defined
+
+- set_fact:
+    dhcp_range: "{{ dhcp_range | combine({'subnet': ip_range }) }}"
+
+- set_fact:
+    dhcp_range: "{{ dhcp_range | combine({'prefix': ip_range | ansible.utils.ipaddr('prefix')}) }}"
+
+- set_fact:
+    dhcp_range: "{{ dhcp_range | combine({ 'host': dhcp_range.subnet | ansible.utils.ipaddr('2') | ansible.utils.ipaddr('address') }) }}"
+  when:
+  - ip_address is not defined
+
+- set_fact:
+    dhcp_range: "{{ dhcp_range | combine({ 'host': ip_address }) }}"
+  when:
+  - ip_address is defined
+
+- set_fact:
+    dhcp_range: "{{ dhcp_range | combine({ 'first': dhcp_range.subnet | ansible.utils.ipaddr('3') | ansible.utils.ipaddr('address') }) }}"
+
+- set_fact:
+    dhcp_range: "{{ dhcp_range | combine({ 'last': dhcp_range.subnet | ansible.utils.ipaddr('-2') | ansible.utils.ipaddr('address') }) }}"
+
+- set_fact:
+    dhcp_range: "{{ dhcp_range | combine({ 'gw': dhcp_range.host }) }}"
+  when: ip_gw is not defined
+
+- set_fact:
+    dhcp_range: "{{ dhcp_range | combine({ 'gw': ip_gw }) }}"
+  when: ip_gw is defined

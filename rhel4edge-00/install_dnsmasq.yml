@@ -1,0 +1,4 @@
+- name: Install image builder
+  hosts: all
+  roles:
+    - dnsmasq

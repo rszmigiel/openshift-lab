@@ -1,0 +1,41 @@
+- name: Extract RHEL boot ISO filename from URL
+  set_fact:
+    rhel_boot_file: "{{ rhel_boot_url | basename | regex_replace('\\?.*$') }}"
+
+- name: Ensure there is RHEL boot ISO available locally
+  get_url:
+    url: "{{ rhel_boot_url }}"
+    dest: "/usr/share/nginx/html/{{ rhel_boot_file }}"
+
+- name: Ensure images directory is present
+  file:
+    path: /usr/share/nginx/html/images
+    state: directory
+
+- name: Get ISO image attributes
+  ansible.builtin.stat:
+    path: "/usr/share/nginx/html/{{ rhel_boot_file }}" 
+  register: iso_file_type
+
+- name: Ensure ISO image is really ISO image
+  assert:
+    that:
+    - "'application/x-iso9660-image' in iso_file_type.stat.mimetype"
+
+- name: Ensure VMLINUZ image is extracted from the ISO image
+  shell: 
+    cmd: "/usr/bin/osirrox -indev {{ rhel_boot_file }} -extract /images/pxeboot/vmlinuz vmlinuz"
+    chdir: "/usr/share/nginx/html"
+    creates: "vmlinuz"
+
+- name: Ensure INITRD.IMG image is extracted from the ISO image
+  shell: 
+    cmd: "/usr/bin/osirrox -indev {{ rhel_boot_file }} -extract /images/pxeboot/initrd.img initrd.img"
+    chdir: "/usr/share/nginx/html"
+    creates: "initrd.img"
+
+- name: Ensure INSTALL.IMG image is extracted from the ISO image
+  shell: 
+    cmd: "/usr/bin/osirrox -indev {{ rhel_boot_file }} -extract /images/install.img images/install.img"
+    chdir: "/usr/share/nginx/html"
+    creates: "images/install.img"

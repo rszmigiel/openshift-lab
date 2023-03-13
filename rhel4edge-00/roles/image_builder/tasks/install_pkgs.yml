@@ -1,0 +1,11 @@
+- name: Install required packages
+  dnf:
+    name:
+    - osbuild-composer
+    - composer-cli
+    - cockpit-composer
+    - bash-completion
+    - nginx
+    - genisoimage
+    - podman
+    state: present

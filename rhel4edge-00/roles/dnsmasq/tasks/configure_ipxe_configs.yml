@@ -1,0 +1,7 @@
+- name: Ensure ipxe configs are up to date
+  template:
+    src: "templates/{{ item }}.j2"
+    dest: "/usr/share/nginx/html/{{ item }}"
+  with_items: 
+    - bootstrap-menu.ipxe
+    - bootstrap.ipxe

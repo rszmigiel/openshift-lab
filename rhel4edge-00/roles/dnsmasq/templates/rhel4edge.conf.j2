@@ -1,0 +1,17 @@
+interface={{ dhcp_interface }}
+bind-interfaces
+dhcp-range={{ dhcp_range.first }},{{ dhcp_range.last }},infinite
+enable-tftp
+tftp-root=/var/lib/tftpboot
+dhcp-hostsdir=/etc/dnsmasq.d/dhcp-hosts
+dhcp-option={{ dhcp_interface }},3,{{ dhcp_range.gw }}
+
+dhcp-match=set:ipxe,175 # iPXE sends a 175 option.
+dhcp-vendorclass=BIOS,PXEClient:Arch:00000
+
+dhcp-boot=tag:!ipxe,tag:BIOS,undionly.kpxe
+dhcp-boot=tag:!ipxe,tag:!BIOS,ipxe-x86_64.efi
+
+dhcp-boot=tag:ipxe,http://{{ dhcp_range.host }}/bootstrap-menu.ipxe
+dhcp-boot=tag:ipxe,tag:bootstrap-now,http://{{ dhcp_range.host }}/bootstrap.ipxe
+

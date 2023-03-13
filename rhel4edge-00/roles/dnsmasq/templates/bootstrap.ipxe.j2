@@ -1,0 +1,4 @@
+#!ipxe
+kernel http://{{ dhcp_range.host }}/vmlinuz initrd=initrd.img inst.ks=http://{{ dhcp_range.host }}/kickstart.cfg rd.neednet=1 ip=dhcp rd.net.dhcp.retry=9 rd.net.timeout.dhcp=20 inst.stage2=http://{{ dhcp_range.host }}/
+initrd http://{{ dhcp_range.host }}/initrd.img
+boot

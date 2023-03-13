@@ -1,0 +1,7 @@
+- name: Ensure the second interface has IP address configured
+  nmcli:
+    type: ethernet
+    ifname: "{{ dhcp_interface }}"
+    conn_name: "System {{ dhcp_interface }}"
+    ip4: "{{ dhcp_range.host }}/{{ dhcp_range.prefix }}"
+    state: present

@@ -1,0 +1,40 @@
+#!ipxe
+
+set menu-timeout 0
+set submenu-timeout ${menu-timeout}
+set initiator-iqn ${mac}
+
+:start
+menu iPXE boot menu for ${initiator-iqn}
+item --gap --             ------------------------- Operating systems ------------------------------
+item --key x exit         Exit iPXE and continue BIOS boot
+item --key b bootstrap    Bootstrap this system - all data will be deleted!
+item --key c config       Configure settings
+item shell                Drop to iPXE shell
+item reboot               Reboot computer
+item
+choose --timeout ${menu-timeout} --default ${menu-default} selected || goto exit
+set menu-timeout 0
+goto ${selected}
+
+:bootstrap
+kernel http://{{ dhcp_range.host }}/vmlinuz initrd=initrd.img inst.ks=http://{{ dhcp_range.host }}/kickstart.cfg rd.neednet=1 ip=dhcp rd.net.dhcp.retry=9 rd.net.timeout.dhcp=20 inst.stage2=http://{{ dhcp_range.host }}/
+initrd http://{{ dhcp_range.host }}/initrd.img
+boot
+
+:config
+config
+goto start
+
+:shell
+echo Type 'exit' to get the back to the menu
+shell
+set menu-timeout 0
+set submenu-timeout 0
+goto start
+
+:reboot
+reboot
+
+:exit
+exit

@@ -1,0 +1,12 @@
+- name: Ensure osbuild-composer is enabled
+  systemd:
+    name:  osbuild-composer.socket
+    enabled: yes
+    state: started
+
+- name: Ensure cockpit is enabled
+  systemd:
+    name:  cockpit.socket
+    enabled: yes
+    state: started
+

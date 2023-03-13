@@ -1,0 +1,11 @@
+- name: Ensure dnsmasq is restarted
+  systemd:
+    name: dnsmasq.service
+    state: restarted
+
+
+- name: Ensure nftables are restarted
+  systemd:
+    name: nftables.service
+    state: restarted
+    enabled: true

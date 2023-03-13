@@ -1,0 +1,12 @@
+- name: Ensure there is NAT configured in nftables
+  template:
+    src: templates/edge-nat.nft.j2
+    dest: /etc/nftables/edge-nat.nft
+  notify: "Ensure nftables are restarted"
+
+- name: Ensure nftables read edge-nat config file
+  lineinfile:
+    path: /etc/sysconfig/nftables.conf
+    line: 'include "/etc/nftables/edge-nat.nft"'
+  notify: "Ensure nftables are restarted"
+

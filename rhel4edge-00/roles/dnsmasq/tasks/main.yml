@@ -1,0 +1,11 @@
+- include_tasks: install_pkgs.yml
+- include_tasks: configure_network.yml
+- include_tasks: configure_nftables.yml
+- include_tasks: configure_ipxe_images.yml
+- include_tasks: configure_dnsmasq.yml
+- include_tasks: configure_nginx.yml
+- include_tasks: download_rhel_iso.yml
+- include_tasks: configure_ipxe_configs.yml
+- include_tasks: configure_kickstart.yml
+- include_tasks: configure_dhcp_hosts.yml
+  when: mac_addresses is defined

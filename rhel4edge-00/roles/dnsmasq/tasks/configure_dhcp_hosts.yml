@@ -1,0 +1,18 @@
+- set_fact:
+    mac_address_list: "{{ mac_addresses.split(',') | lower }}"
+
+- name: "Ensure provided DHCP addresses list is correct"
+  assert:
+   that:
+   - item | ansible.utils.hwaddr
+  with_items:
+  - "{{ mac_address_list }}"
+
+- name: Ensure DHCP hosts configuration file exist for provided mac addresses. 
+  template: 
+    src: dhcp-host.j2
+    dest: "/etc/dnsmasq.d/dhcp-hosts/{{ item | regex_replace(':') }}"
+  with_items: 
+  - "{{ mac_address_list }}"
+  notify:
+  - "Ensure dnsmasq is restarted"

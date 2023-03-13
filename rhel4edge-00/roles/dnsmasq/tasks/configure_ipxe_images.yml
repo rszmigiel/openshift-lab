@@ -1,0 +1,6 @@
+- name: Ensure iPXE images are copied to /var/lib/tftpboot directory
+  copy:
+    src: /usr/share/ipxe/
+    dest: /var/lib/tftpboot
+    remote_src: true
+    

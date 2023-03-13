@@ -1,0 +1,17 @@
+- name: Ensure /etc/dnsmasq.d/dhcp-hosts exists
+  file:
+    state: directory
+    path: /etc/dnsmasq.d/dhcp-hosts
+    recurse: true
+
+- name: create dnsmasq.conf
+  template:
+    src: templates/rhel4edge.conf.j2
+    dest: /etc/dnsmasq.d/rhel4edge.conf
+  notify: "Ensure dnsmasq is restarted"
+
+- name: Ensure dnsmasq is enabled and running
+  systemd:
+    name:  dnsmasq.service
+    enabled: yes
+    state: started

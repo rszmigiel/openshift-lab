@@ -1,0 +1,12 @@
+- name: Ensure virtctl CLI is available
+  get_url:
+    url: "https://hyperconverged-cluster-cli-download-openshift-cnv.apps.{{ cluster_name }}/amd64/linux/virtctl.tar.gz"
+    dest: "/tmp"
+    validate_certs: false
+
+- name: Extract virtctl CLI
+  unarchive:
+    src: "/tmp/virtctl.tar.gz"
+    dest: "/usr/bin/"
+    remote_src: yes
+    creates: "/usr/bin/virtctl"

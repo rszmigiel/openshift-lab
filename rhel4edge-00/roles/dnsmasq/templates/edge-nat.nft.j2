@@ -1,0 +1,25 @@
+table ip nftables_svc {
+	set masq_interfaces {
+		type ifname
+		elements = { "{{ dhcp_interface }}" }
+	}
+
+	set masq_ips {
+		type ipv4_addr
+		flags interval
+		elements = { {{ dhcp_range.subnet }} }
+	}
+
+	chain do_masquerade {
+		meta iif > 0 th sport < 16384 th dport >= 32768 masquerade random
+		masquerade
+	}
+
+	chain POSTROUTING {
+		type nat hook postrouting priority srcnat + 20
+		policy accept
+
+		iifname @masq_interfaces oifname != @masq_interfaces jump do_masquerade
+		ip saddr @masq_ips jump do_masquerade
+	}
+}

@@ -1,0 +1,9 @@
+- name: Ensure required packages are installed
+  ansible.builtin.dnf:
+    name:
+      - dnsmasq
+      - dnsmasq-utils
+      - ipxe-bootimgs
+      - xorriso
+      - nginx
+    state: present

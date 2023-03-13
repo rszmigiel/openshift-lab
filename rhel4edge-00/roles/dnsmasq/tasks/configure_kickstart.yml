@@ -1,0 +1,23 @@
+- name: Generate random password for root
+  set_fact:
+    root_password: "{{ lookup('ansible.builtin.password', '/dev/null chars=ascii_lowercase,digits length=8') }}"
+    root_password_generated: 1
+  when:
+  - root_password is not defined
+
+- name: Display generated password
+  debug:
+    msg: "Auto-generated password is: {{ root_password }}"
+  when:
+  - root_password_generated is defined
+
+- name: Ensure root password is encrypted
+  set_fact:
+    root_password_encrypted: "{{ root_password | password_hash('sha512') }}"
+  when:
+  - root_password is defined
+
+- name: Ensure kickstart config is up to date
+  template:
+    src: templates/kickstart.cfg.j2
+    dest: /usr/share/nginx/html/kickstart.cfg

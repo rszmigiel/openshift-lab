@@ -1,0 +1,11 @@
+- name: Ensure oc CLI is available
+  get_url:
+    url: "https://mirror.openshift.com/pub/openshift-v4/x86_64/clients/ocp/stable/openshift-client-linux.tar.gz"
+    dest: "/tmp"
+
+- name: Extract oc CLI
+  unarchive:
+    src: "/tmp/openshift-client-linux.tar.gz"
+    dest: "/usr/bin/"
+    remote_src: yes
+    creates: "/usr/bin/oc"

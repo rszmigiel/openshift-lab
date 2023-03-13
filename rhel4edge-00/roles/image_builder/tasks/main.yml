@@ -1,0 +1,6 @@
+- include_tasks: install_pkgs.yml
+- include_tasks: configure_network.yml
+- include_tasks: enable_osbuild.yml
+- include_tasks: networkmanager.yml
+- include_tasks: download-oc-cli.yml
+- include_tasks: download-virtctl-cli.yml
